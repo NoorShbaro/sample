@@ -14,7 +14,7 @@ class AddMovie extends StatefulWidget {
 
 class _AddMovieState extends State<AddMovie> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController _controllerID = TextEditingController();
+  //TextEditingController _controllerID = TextEditingController();
   TextEditingController _controllerName = TextEditingController();
   TextEditingController _controllerGenre= TextEditingController();
   TextEditingController _controllerDuration = TextEditingController();
@@ -23,7 +23,7 @@ class _AddMovieState extends State<AddMovie> {
 
   @override
   void dispose() {
-    _controllerID.dispose();
+    //_controllerID.dispose();
     _controllerName.dispose();
     _controllerGenre.dispose();
     _controllerDuration.dispose();
@@ -46,7 +46,7 @@ class _AddMovieState extends State<AddMovie> {
           automaticallyImplyLeading: false,
         ),
         body: Center(child: Form(
-          key: _formKey, // key to uniquely identify the form when performing validation
+          key: _formKey,
           child: Column(
             children: <Widget>[
               const SizedBox(height: 10),
@@ -97,12 +97,12 @@ class _AddMovieState extends State<AddMovie> {
                     setState(() {
                       _loading = true;
                     });
-                    saveMovie(update, int.parse(_controllerID.text), _controllerName.text,
+                    saveMovie(update, _controllerName.text,
                         _controllerGenre.text,
                         double.parse(_controllerDuration.text));
                   }
                 },
-                child: const Text('Submit'),
+                child: const Text('Save'),
               ),
               const SizedBox(height: 10),
               Visibility(visible: _loading, child: const CircularProgressIndicator())
@@ -112,7 +112,7 @@ class _AddMovieState extends State<AddMovie> {
   }
 }
 
-void saveMovie(Function(String text) update, int movieID, String name,String genre, double duration) async {
+void saveMovie(Function(String text) update, String name,String genre, double duration) async {
   try {
     final response = await http.post(
         Uri.parse('$_baseURL/saveMovie.php'),
@@ -120,7 +120,7 @@ void saveMovie(Function(String text) update, int movieID, String name,String gen
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: convert.jsonEncode(<String, String>{
-          'MovieID': '$movieID','name': name, 'genre': genre, 'duration':'$duration', 'key': 'liuFinal'
+          'name': name, 'genre': genre, 'duration':'$duration', 'key': 'liuFinal'
         })).timeout(const Duration(seconds: 5));
     if (response.statusCode == 200) {
       update(response.body);
